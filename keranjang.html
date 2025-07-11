@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Keranjang - Claudya Sheva</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      background-color: #ffe6ea;
+    }
+
+    header {
+      background-color: #c480a3;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      margin: 0 10px;
+    }
+
+    nav a.active {
+      font-weight: bold;
+      text-decoration: underline;
+    }
+
+    main {
+      padding: 2rem;
+      text-align: center;
+    }
+
+    h2 {
+      font-family: cursive;
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    table {
+      margin: auto;
+      width: 80%;
+      background-color: #f5b7b1;
+      border-collapse: collapse;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    th, td {
+      padding: 1rem;
+      border-bottom: 1px solid #fff;
+      text-align: left;
+    }
+
+    tfoot td {
+      font-weight: bold;
+    }
+
+    .keranjang-btn {
+      margin-top: 2rem;
+    }
+
+    .keranjang-btn button {
+      padding: 10px 20px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin: 0 10px;
+    }
+
+    .kosongkan {
+      background-color: #f44336;
+      color: white;
+    }
+
+    .wa {
+      background-color: #e91e63;
+      color: white;
+    }
+
+    footer {
+      margin-top: 3rem;
+      background-color: #c480a3;
+      color: white;
+      text-align: center;
+      padding: 1rem;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>claudya sheva</h1>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="produk.html">Produk</a>
+    <a href="keranjang.html" class="active">Keranjang</a>
+    <a href="kontak.html">Kontak</a>
+  </nav>
+</header>
+
+<main>
+  <h2>Isi Keranjang:</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Produk</th>
+        <th>Harga</th>
+      </tr>
+    </thead>
+    <tbody id="daftar-keranjang"></tbody>
+    <tfoot>
+      <tr>
+        <td>Total Item</td>
+        <td id="total-item">0 produk</td>
+      </tr>
+      <tr>
+        <td>Total Harga</td>
+        <td id="total-harga">Rp0</td>
+      </tr>
+    </tfoot>
+  </table>
+
+  <div class="keranjang-btn">
+    <button class="kosongkan" onclick="kosongkanKeranjang()">Kosongkan Keranjang</button>
+    <button class="wa" onclick="checkoutWhatsApp()">Kirim via WhatsApp</button>
+  </div>
+</main>
+
+<footer>
+  <p>&copy; 2025 Claudya Sheva.</p>
+</footer>
+
+<script>
+  const daftar = document.getElementById("daftar-keranjang");
+  const totalHargaEl = document.getElementById("total-harga");
+  const totalItemEl = document.getElementById("total-item");
+
+  let keranjang = JSON.parse(localStorage.getItem("keranjang")) || [];
+  let total = 0;
+
+  keranjang.forEach(item => {
+    const row = document.createElement("tr");
+
+    const namaCell = document.createElement("td");
+    namaCell.textContent = item.nama;
+
+    const hargaCell = document.createElement("td");
+    hargaCell.textContent = "Rp" + item.harga.toLocaleString("id-ID");
+
+    row.appendChild(namaCell);
+    row.appendChild(hargaCell);
+
+    daftar.appendChild(row);
+
+    total += item.harga;
+  });
+
+  totalItemEl.textContent = keranjang.length + " produk";
+  totalHargaEl.textContent = "Rp" + total.toLocaleString("id-ID");
+
+  function kosongkanKeranjang() {
+    localStorage.removeItem("keranjang");
+    location.reload();
+  }
+
+ function checkoutWhatsApp() {
+    if (keranjang.length === 0) {
+      alert("Keranjang masih kosong!");
+      return;
+    }
+
+    let pesan = "Halo! Saya ingin memesan:%0A";
+    keranjang.forEach((item, i) => {
+      pesan += `${i + 1}. ${item.nama} - Rp${item.harga.toLocaleString("id-ID")}%0A`;
+    });
+
+    let total = keranjang.reduce((sum, item) => sum + item.harga, 0);
+    pesan += `%0ATotal: Rp${total.toLocaleString("id-ID")}`;
+
+    const link = `https://wa.me/6285939278166?text=${pesan}`;
+    window.open(link, "_blank");
+  }
+</script>
+
+</body>
+</html>
